@@ -5,16 +5,19 @@ on:
     - cron: '0 0 * * *'  # Run daily at midnight
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: '3.9'  
 
@@ -28,8 +31,8 @@ jobs:
 
     - name: Commit and push changes
       run: |
-        git config --global user.email "lukas.wallrich@gmail.com"
-        git config --global user.name "Lukas Wallrich"
+        git config --global user.email github-actions@github.com
+        git config --global user.name github-actions
         git add tenzing.md
         git commit -m "Daily update"
         git push
