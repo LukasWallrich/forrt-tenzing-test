@@ -76,12 +76,18 @@ def concatenate_contributions(group):
     full_name = format_name(group.iloc[0])
     # Create the contributions string for each project
     contributions = [
-        f"{i+1}. {row['Project Name']} project on {row['Contributions']}" if pd.isna(row['Project URL']) or row['Project URL'] == ''
-        else f"{i+1}. [{row['Project Name']}]({row['Project URL']}) project on {row['Contributions']}"
-        for i, (_, row) in enumerate(group.iterrows())
+        f"{row['Project Name']} project on {row['Contributions']}" if pd.isna(row['Project URL']) or row['Project URL'] == ''
+        else f"[{row['Project Name']}]({row['Project URL']}) project on {row['Contributions']}"
+        for _, row in group.iterrows()
     ]
-    # Join all contributions with a semicolon
-    contributions_str = '; '.join(contributions)
+
+    # Add numbering only if there are more than 1 contributions
+    if len(contributions) > 1:
+        contributions = [f"{i+1}. {contribution}" for i, contribution in enumerate(contributions)]
+
+    # Turn contributions into multiline list or single line
+    contributions_str = contributions[0] if len(contributions) == 1 else '\n    ' + '\n    '.join(contributions)
+
     return f"- **[{full_name}]({'https://orcid.org/' + group.iloc[0]['ORCID iD'].strip()})** contributed to {contributions_str}"
 
 # Apply the function to each group and create a summary DataFrame
